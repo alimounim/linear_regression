@@ -180,3 +180,30 @@ class LinearRegression:
         prediction = self.predict(X)
         mse = np.mean((prediction - y)**2)
         return mse
+
+    def save(self, filename):
+        """Save the model parameters to a file.
+
+        Parameters
+        ----------
+        filename: str
+            The name of the file to save the model parameters.
+        """
+        if not filename.endswith('.npz'):
+            filename += '.npz'
+        np.savez(filename, weights=self.weights, bias=self.bias)
+
+    def load(self, filename):
+        """Load the model parameters from a file.
+
+        Parameters
+        ----------
+        filename: str
+            The name of the file to load the model parameters from.
+        """
+        if not filename.endswith('.npz'):
+            filename += '.npz'
+
+        data = np.load(filename)
+        self.weights = data['weights']
+        self.bias = data['bias']
