@@ -25,35 +25,36 @@ class LinearRegression:
         self.weights = None
         self.bias = None
 
-    def fit(self, X, y, batch_size=32, regularization=0, max_epochs=100, patience=3):
+    def fit(self, X, y, batch_size=None, regularization=None, max_epochs=None, patience=None):
         """Fit a linear model.
 
         Parameters:
         -----------
         batch_size: int
-            The number of samples per batch.
+            The number of samples per batch. Defaults to the value set in __init__.
         regularization: float
-            The regularization parameter.
+            The regularization parameter. Defaults to the value set in __init__.
         max_epochs: int
-            The maximum number of epochs.
+            The maximum number of epochs. Defaults to the value set in __init__.
         patience: int
             The number of epochs to wait before stopping if the validation loss
-            does not improve.
+            does not improve. Defaults to the value set in __init__.
         """
-        self.batch_size = batch_size
-        self.regularization = regularization
-        self.max_epochs = max_epochs
-        self.patience = patience
+        if batch_size is not None:
+            self.batch_size = batch_size
+        if regularization is not None:
+            self.regularization = regularization
+        if max_epochs is not None:
+            self.max_epochs = max_epochs
+        if patience is not None:
+            self.patience = patience
 
         # reshape y so single-output and multi-output cases are handled consistently
         if y.ndim == 1:
             y = y.reshape(-1, 1)
-        
-        # TODO: Initialize the weights and bias based on the shape of X and y.
+
         self.weights = np.zeros((X.shape[1], y.shape[1]))
         self.bias = np.zeros(y.shape[1])
-
-        # TODO: Implement the training loop.
 
         # Split the data into training and validation sets
         X_train, y_train, X_val, y_val = self.train_val_split(X, y)
@@ -67,7 +68,7 @@ class LinearRegression:
             # for each batch in the epoch, compute gradients, then update weights and bias
             for X_batch, y_batch in self.get_batches(X_train, y_train):
                 dw, db = self.gradient_descent(X_batch, y_batch)
-                self.update_parameters(dw, db)  
+                self.update_parameters(dw, db)
 
             # after all batches are processed, compute the validation loss for early stopping
             val_loss = self.score(X_val, y_val)
@@ -84,7 +85,7 @@ class LinearRegression:
 
         # restore the best weights and bias after training
         self.weights = best_weights
-        self.bias = best_bias   
+        self.bias = best_bias
 
             
     def train_val_split(self, X, y, val_fraction=0.1):
@@ -129,7 +130,6 @@ class LinearRegression:
         y_batch: numpy.ndarray
             The target data for the batch.
         """
-        # TODO: Implement the gradient descent update.
         # compute and return dw, db for one batch of data
         m = X_batch.shape[0]
         prediction = self.predict(X_batch)
@@ -159,7 +159,6 @@ class LinearRegression:
         X: numpy.ndarray
             The input data.
         """
-        # TODO: Implement the prediction function.
         # target = Features * weights + bias
         prediction = np.dot(X, self.weights) + self.bias
         return prediction
@@ -174,7 +173,6 @@ class LinearRegression:
         y: numpy.ndarray
             The target data.
         """
-        # TODO: Implement the scoring function.
         if y.ndim == 1:
             y = y.reshape(-1, 1)
         prediction = self.predict(X)
