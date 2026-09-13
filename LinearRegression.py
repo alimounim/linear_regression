@@ -2,7 +2,7 @@ import numpy as np
 
 class LinearRegression:
 
-    def __init__(self, batch_size=32, regularization=0, max_epochs=100, patience=3, learning_rate=0.01):
+    def __init__(self, batch_size=32, regularization=0, max_epochs=100, patience=3, learning_rate=0.01, max_steps=None):
         """Linear Regression using Gradient Descent.
 
         Parameters:
@@ -24,8 +24,9 @@ class LinearRegression:
         self.learning_rate = learning_rate
         self.weights = None
         self.bias = None
+        self.max_steps = max_steps
 
-    def fit(self, X, y, batch_size=None, regularization=None, max_epochs=None, patience=None):
+    def fit(self, X, y, batch_size=None, regularization=None, max_epochs=None, patience=None, max_steps=None):
         """Fit a linear model.
 
         Parameters:
@@ -40,6 +41,8 @@ class LinearRegression:
             The number of epochs to wait before stopping if the validation loss
             does not improve. Defaults to the value set in __init__.
         """
+        if max_steps is not None:
+            self.max_steps = max_steps
         if batch_size is not None:
             self.batch_size = batch_size
         if regularization is not None:
@@ -71,6 +74,12 @@ class LinearRegression:
                 dw, db = self.gradient_descent(X_batch, y_batch)
                 self.update_parameters(dw, db)
                 self.loss_history.append(self.score(X_batch, y_batch))
+                if self.max_steps is not None and len(self.loss_history) >= self.max_steps:
+                    print(f"Reached maximum number of steps: {self.max_steps}")
+                    break
+            if self.max_steps is not None and len(self.loss_history) >= self.max_steps:
+                print(f"Reached maximum number of steps: {self.max_steps}")
+                break
 
             # after all batches are processed, compute the validation loss for early stopping
             val_loss = self.score(X_val, y_val)
