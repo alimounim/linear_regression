@@ -55,6 +55,7 @@ class LinearRegression:
 
         self.weights = np.zeros((X.shape[1], y.shape[1]))
         self.bias = np.zeros(y.shape[1])
+        self.loss_history = []
 
         # Split the data into training and validation sets
         X_train, y_train, X_val, y_val = self.train_val_split(X, y)
@@ -69,6 +70,7 @@ class LinearRegression:
             for X_batch, y_batch in self.get_batches(X_train, y_train):
                 dw, db = self.gradient_descent(X_batch, y_batch)
                 self.update_parameters(dw, db)
+                self.loss_history.append(self.score(X_batch, y_batch))
 
             # after all batches are processed, compute the validation loss for early stopping
             val_loss = self.score(X_val, y_val)
